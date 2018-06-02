@@ -22,4 +22,17 @@ class DaemonTestCase(TestCase):
         del self.daemon
 
     def construct_daemon(self):
+        self.mock_pid = MagicMock()
+        haspid_patcher = patch(
+            'py_rofi_bus.components.daemon.HasPid.__init__',
+            self.mock_pid,
+        )
+        self.mock_haspid = haspid_patcher.start()
+        self.addCleanup(haspid_patcher.stop)
         self.daemon = Daemon()
+
+
+class ConstructorUnitTests(DaemonTestCase):
+
+    def test_call(self):
+        self.mock_pid.assert_called_once()
