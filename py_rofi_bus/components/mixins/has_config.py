@@ -5,7 +5,7 @@ from py_rofi_bus.components import Config
 class HasConfig(object):
 
     def __init__(self, config=None, *args,  **kwargs):
-        if isinstance(config, Config):
-            self.config = config
-        else:
+        if config is None:
             self.config = Config()
+        else:
+            self.config = config
