@@ -78,3 +78,15 @@ class SetPidNameUnitTests(HasPidTestCase):
         self.assertNotEqual(self.has_pid.pid_name, self.FINAL)
         self.has_pid.set_pid_name()
         self.assertEqual(self.has_pid.pid_name, '')
+
+
+class GetPidFileNameUnitTests(HasPidTestCase):
+
+    @patch('py_rofi_bus.components.mixins.has_pid.join')
+    def test_call(self, mock_join):
+        self.has_pid.config = MagicMock()
+        self.has_pid.pid_name = 'qqq'
+        # setattr(self.has_pid.config, 'config_dir', 'qqq')
+        mock_join.assert_not_called()
+        self.has_pid.get_pid_file_name()
+        mock_join.assert_called_once()
