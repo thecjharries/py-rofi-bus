@@ -8,7 +8,7 @@ from unittest import TestCase
 
 from mock import call, MagicMock, patch
 
-from py_rofi_bus.components import Daemon
+from py_rofi_bus.dbus import Daemon
 
 
 class DaemonTestCase(TestCase):
@@ -45,18 +45,18 @@ class BootstrapUnitTests(DaemonTestCase):
             ),
         )
         glib_patcher = patch(
-            'py_rofi_bus.components.daemon.GLib',
+            'py_rofi_bus.dbus.daemon.GLib',
             self.mock_loop,
         )
         self.mock_glib = glib_patcher.start()
         self.addCleanup(glib_patcher.stop)
-        bus_patcher = patch('py_rofi_bus.components.daemon.SessionBus')
+        bus_patcher = patch('py_rofi_bus.dbus.daemon.SessionBus')
         self.mock_bus = bus_patcher.start()
         self.addCleanup(bus_patcher.stop)
 
     def test_publish_call(self):
         bootstrap = Daemon.bootstrap
-        mock_daemon = patch('py_rofi_bus.components.daemon.Daemon').start()
+        mock_daemon = patch('py_rofi_bus.dbus.daemon.Daemon').start()
         mock_daemon.assert_not_called()
         bootstrap()
         mock_daemon.assert_called_once_with()
