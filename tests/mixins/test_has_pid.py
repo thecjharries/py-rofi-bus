@@ -86,7 +86,66 @@ class GetPidFileNameUnitTests(HasPidTestCase):
     def test_call(self, mock_join):
         self.has_pid.config = MagicMock()
         self.has_pid.pid_name = 'qqq'
-        # setattr(self.has_pid.config, 'config_dir', 'qqq')
         mock_join.assert_not_called()
         self.has_pid.get_pid_file_name()
         mock_join.assert_called_once()
+
+
+class ClearPidFileUnitTests(HasPidTestCase):
+
+    def setUp(self):
+        HasPidTestCase.setUp(self)
+        get_pid_patcher = patch.object(HasPid, 'get_pid_file_name')
+        self.mock_get_pid = get_pid_patcher.start()
+        self.addCleanup(get_pid_patcher.stop)
+        exists_patcher = patch('py_rofi_bus.components.mixins.has_pid.exists')
+        self.mock_exists = exists_patcher.start()
+        self.addCleanup(exists_patcher.stop)
+        killpg_patcher = patch('py_rofi_bus.components.mixins.has_pid.killpg')
+        self.mock_killpg = killpg_patcher.start()
+        self.addCleanup(killpg_patcher.stop)
+        remove_patcher = patch('py_rofi_bus.components.mixins.has_pid.remove')
+        self.mock_remove = remove_patcher.start()
+        self.addCleanup(remove_patcher.stop)
+        open_patcher = patch('py_rofi_bus.components.mixins.has_pid.open')
+        self.mock_open = open_patcher.start()
+        self.addCleanup(open_patcher.stop)
+
+    def test_doesnt_exist(self):
+        self.mock_exists.return_value = False
+        self.mock_exists.assert_not_called()
+        self.mock_killpg.assert_not_called()
+        self.mock_remove.assert_not_called()
+        self.mock_open.assert_not_called()
+        self.has_pid.clear_pid_file()
+        self.mock_exists.assert_called_once()
+        self.mock_killpg.assert_not_called()
+        self.mock_remove.assert_not_called()
+        self.mock_open.assert_not_called()
+
+    def test_file_opens(self):
+        self.mock_exists.return_value = True
+        self.mock_open.return_value = MagicMock(spec=file)
+        self.mock_exists.assert_not_called()
+        self.mock_killpg.assert_not_called()
+        self.mock_remove.assert_not_called()
+        self.mock_open.assert_not_called()
+        self.has_pid.clear_pid_file()
+        self.mock_exists.assert_called_once()
+        self.mock_killpg.assert_called_once()
+        self.mock_remove.assert_called_once()
+        self.mock_open.assert_called_once()
+
+    def test_cant_kill(self):
+        self.mock_exists.return_value = True
+        self.mock_open.return_value = MagicMock(spec=file)
+        self.mock_killpg.side_effect = OSError
+        self.mock_exists.assert_not_called()
+        self.mock_killpg.assert_not_called()
+        self.mock_remove.assert_not_called()
+        self.mock_open.assert_not_called()
+        self.has_pid.clear_pid_file()
+        self.mock_exists.assert_called_once()
+        self.mock_killpg.assert_called_once()
+        self.mock_remove.assert_called_once()
+        self.mock_open.assert_called_once()
