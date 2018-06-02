@@ -23,14 +23,15 @@ class Daemon(object):
     _is_running = False
 
     def __init__(self, bus=None, loop=None):
-        if isinstance(bus, Bus):
-            self.bus = Bus
-        else:
+        if bus is None:
             self.bus = SessionBus()
-        if isinstance(loop, MainLoop):
-            self.loop = loop
         else:
+            self.bus = bus
+        if loop is None:
             self.loop = MainLoop()
+        else:
+            self.loop = loop
+
         self.bus.publish(self.INTERFACE_NAME, self)
 
     def start(self):
