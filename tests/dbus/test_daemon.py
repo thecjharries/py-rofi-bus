@@ -96,6 +96,15 @@ class IsRunningUnitTests(DaemonTestCase):
         self.assertFalse(self.daemon.is_running())
 
 
+class StopUnitTests(DaemonTestCase):
+
+    def test_call(self):
+        self.daemon._is_running = False
+        self.mock_quit.assert_not_called()
+        self.daemon.stop()
+        self.mock_quit.assert_called_once_with()
+
+
 class BootstrapUnitTests(DaemonTestCase):
 
     def setUp(self):
