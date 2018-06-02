@@ -125,7 +125,7 @@ class ClearPidFileUnitTests(HasPidTestCase):
 
     def test_file_opens(self):
         self.mock_exists.return_value = True
-        self.mock_open.return_value = MagicMock(spec=file)
+        self.mock_open.return_value = MagicMock()
         self.mock_exists.assert_not_called()
         self.mock_killpg.assert_not_called()
         self.mock_remove.assert_not_called()
@@ -138,7 +138,7 @@ class ClearPidFileUnitTests(HasPidTestCase):
 
     def test_cant_kill(self):
         self.mock_exists.return_value = True
-        self.mock_open.return_value = MagicMock(spec=file)
+        self.mock_open.return_value = MagicMock()
         self.mock_killpg.side_effect = OSError
         self.mock_exists.assert_not_called()
         self.mock_killpg.assert_not_called()
@@ -158,7 +158,7 @@ class WritePidFileUnitTests(HasPidTestCase):
     @patch('py_rofi_bus.components.mixins.has_pid.getpgid')
     @patch('py_rofi_bus.components.mixins.has_pid.getpid')
     def test_call(self, mock_pid, mock_pgid, mock_get, mock_open):
-        mock_open.return_value = MagicMock(spec=file)
+        mock_open.return_value = MagicMock()
         mock_pid.assert_not_called()
         mock_pgid.assert_not_called()
         mock_get.assert_not_called()
