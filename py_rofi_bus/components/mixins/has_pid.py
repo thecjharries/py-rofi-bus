@@ -12,13 +12,16 @@ class HasPid(HasConfig):
         if pid_name:
             kwargs['pid_name'] = pid_name
         HasConfig.__init__(self, *args, **kwargs)
-        if self.config['pid_name']:
+        self.set_pid_name()
+        self.clear_pid_file()
+
+    def set_pid_name(self, pid_name=''):
+        if 'pid_name' in self.config and self.config['pid_name']:
             self.pid_name = self.config['pid_name']
         elif pid_name:
             self.pid_name = pid_name
         else:
             self.pid_name = ''
-        self.clear_pid_file()
 
     def get_pid_file_name(self):
         return join(
