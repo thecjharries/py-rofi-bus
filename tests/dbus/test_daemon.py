@@ -58,8 +58,36 @@ class ConstructorUnitTests(DaemonTestCase):
         self.mock_loop.reset_mock()
         self.mock_bus.reset_mock()
         self.daemon = Daemon(bus=BUS, loop=LOOP)
-        self.assert_equal(BUS, self.daemon.bus)
-        self.assert_equal(LOOP, self.daemon.loop)
+        self.assertEqual(BUS, self.daemon.bus)
+        self.assertEqual(LOOP, self.daemon.loop)
+
+
+class StartUnitTests(DaemonTestCase):
+
+    def test_while_running(self):
+        self.daemon._is_running = True
+        self.mock_run.assert_not_called()
+        self.mock_quit.assert_not_called()
+        self.daemon.start()
+        self.mock_run.assert_not_called()
+        self.mock_quit.assert_not_called()
+
+    def test_while_stopped(self):
+        self.daemon._is_running = False
+        self.mock_run.assert_not_called()
+        self.mock_quit.assert_not_called()
+        self.daemon.start()
+        self.mock_run.assert_called_once_with()
+        self.mock_quit.assert_not_called()
+
+    def test_with_interrupt(self):
+        self.mock_run.side_effect = KeyboardInterrupt
+        self.daemon._is_running = False
+        self.mock_run.assert_not_called()
+        self.mock_quit.assert_not_called()
+        self.daemon.start()
+        self.mock_run.assert_called_once_with()
+        self.mock_quit.assert_called_once_with()
 
 
 class IsRunningUnitTests(DaemonTestCase):
