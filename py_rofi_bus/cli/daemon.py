@@ -41,11 +41,17 @@ class Daemon(object):
         'status': status,
     }
 
-    def __init__(self):
-        self.parser = ArgumentParser(
-            prog='daemon',
-            description='Manage the py-rofi-bus daemon'
-        )
+    def __init__(self, parent_parser=None):
+        if parent_parser is None:
+            self.parser = ArgumentParser(
+                prog='daemon',
+                description='Manage the py-rofi-bus daemon'
+            )
+        else:
+            self.parser = parent_parser.add_parser(
+                'daemon',
+                help='Manage the py-rofi-bus daemon'
+            )
 
     def attach_subparsers(self):
         self.subparsers = self.parser.add_subparsers(
