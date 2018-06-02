@@ -52,3 +52,29 @@ class ConstructorUnitTests(HasPidTestCase):
         self.mock_pid.assert_called()
         self.mock_clear.assert_called()
         self.mock_set.assert_called()
+
+
+class SetPidNameUnitTests(HasPidTestCase):
+    FINAL = 'yup'
+    STARTING = 'nope'
+
+    def test_already_have_pid(self):
+        self.has_pid.config = {'pid_name': self.FINAL}
+        self.has_pid.pid_name = self.STARTING
+        self.assertNotEqual(self.has_pid.pid_name, self.FINAL)
+        self.has_pid.set_pid_name()
+        self.assertEqual(self.has_pid.pid_name, self.FINAL)
+
+    def test_passed_in(self):
+        self.has_pid.config = {}
+        self.has_pid.pid_name = self.STARTING
+        self.assertNotEqual(self.has_pid.pid_name, self.FINAL)
+        self.has_pid.set_pid_name(self.FINAL)
+        self.assertEqual(self.has_pid.pid_name, self.FINAL)
+
+    def test_no_pid_name(self):
+        self.has_pid.config = {}
+        self.has_pid.pid_name = self.STARTING
+        self.assertNotEqual(self.has_pid.pid_name, self.FINAL)
+        self.has_pid.set_pid_name()
+        self.assertEqual(self.has_pid.pid_name, '')
