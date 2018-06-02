@@ -9,7 +9,7 @@ from unittest import TestCase
 from mock import call, MagicMock, patch
 
 from py_rofi_bus.cli import Daemon
-from py_rofi_bus.cli.daemon import DAEMON, start, status, stop
+from py_rofi_bus.cli.daemon import start, status, stop
 
 
 @patch('py_rofi_bus.cli.daemon.check_call')
@@ -17,6 +17,33 @@ def test_start(mock_call):
     mock_call.assert_not_called()
     start()
     mock_call.assert_called_once()
+
+MOCK_STOP = MagicMock()
+MOCK_STATUS = MagicMock()
+MOCK_DAEMON = MagicMock(
+    stop=MOCK_STOP,
+    is_running=MOCK_STATUS,
+)
+
+
+@patch('py_rofi_bus.cli.daemon.SessionBus')
+@patch('py_rofi_bus.cli.daemon.DAEMON', MOCK_DAEMON)
+def test_stoppable_daemon(mock_bus):
+    MOCK_DAEMON.reset_mock()
+    MOCK_STOP.reset_mock()
+    MOCK_STOP.assert_not_called()
+    stop()
+    MOCK_STOP.assert_called_once_with()
+
+
+@patch('py_rofi_bus.cli.daemon.SessionBus')
+@patch('py_rofi_bus.cli.daemon.DAEMON', MOCK_DAEMON)
+def test_statusable_daemon(mock_bus):
+    MOCK_DAEMON.reset_mock()
+    MOCK_STATUS.reset_mock()
+    MOCK_STATUS.assert_not_called()
+    status()
+    MOCK_STATUS.assert_called_once_with()
 
 
 class DaemonTestCase(TestCase):
