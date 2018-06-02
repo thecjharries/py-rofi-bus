@@ -18,13 +18,13 @@ class DaemonTestCase(TestCase):
         self.addCleanup(self.wipe_daemon)
 
     def wipe_daemon(self):
-        del self.Daemon
+        del self.daemon
 
     def construct_daemon(self):
-        parser_patcher = patch('py_rofi_bus.cli.application.ArgumentParser')
+        parser_patcher = patch('py_rofi_bus.cli.daemon.ArgumentParser')
         self.mock_parser = parser_patcher.start()
         self.addCleanup(parser_patcher.stop)
-        self.Daemon = Daemon()
+        self.daemon = Daemon()
 
 
 class ConstructorUnitTests(DaemonTestCase):
@@ -38,7 +38,7 @@ class ConstructorUnitTests(DaemonTestCase):
             add_parser=PARSER,
         )
         PARSER.assert_not_called()
-        app = Daemon(parent_parser=PARENT)
+        Daemon(parent_parser=PARENT)
         PARSER.assert_called_once()
 
 
@@ -46,11 +46,11 @@ class AttachSubparsersUnitTests(DaemonTestCase):
 
     def test_call(self):
         SUB = MagicMock()
-        self.app.parser = MagicMock(
+        self.daemon.parser = MagicMock(
             add_subparsers=SUB,
         )
         SUB.assert_not_called()
-        self.app.attach_subparsers()
+        self.daemon.attach_subparsers()
         SUB.assert_called_once()
 
 
@@ -58,9 +58,9 @@ class AddActionDaemonUnitTests(DaemonTestCase):
 
     @patch('py_rofi_bus.cli.application.Daemon')
     def test_call(self, mock_daemon):
-        self.app.subparsers = MagicMock()
+        self.daemon.subparsers = MagicMock()
         mock_daemon.assert_not_called()
-        self.app.add_action_daemon()
+        self.daemon.add_action_daemon()
         mock_daemon.assert_called_once()
 
 
@@ -69,7 +69,7 @@ class BootstrapUnitTests(DaemonTestCase):
     @patch('py_rofi_bus.cli.application.Application')
     def test_call(self, mock_app):
         mock_app.assert_not_called()
-        self.app.bootstrap()
+        self.daemon.bootstrap()
         mock_app.assert_called_once_with()
 
     @patch('py_rofi_bus.cli.application.Daemon')
@@ -86,5 +86,5 @@ class BootstrapUnitTests(DaemonTestCase):
             ),
         )
         mock_app.assert_not_called()
-        self.app.bootstrap()
+        self.daemon.bootstrap()
         mock_app.assert_called_once_with()
