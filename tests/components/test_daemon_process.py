@@ -36,3 +36,38 @@ class ConstructorUnitTests(DaemonTestCase):
 
     def test_call(self):
         self.mock_pid.assert_called_once()
+
+
+class ForkUnitTests(DaemonTestCase):
+
+    def setUp(self):
+        DaemonTestCase.setUp(self)
+        fork_patcher = patch('py_rofi_bus.components.daemon.fork')
+        self.mock_fork = fork_patcher.start()
+        self.addCleanup(fork_patcher.stop)
+        exit_patcher = patch('py_rofi_bus.components.daemon.sys_exit')
+        self.mock_exit = exit_patcher.start()
+        self.addCleanup(exit_patcher.stop)
+
+    def test_successful_parent(self):
+        self.mock_fork.assert_not_called()
+        self.mock_exit.assert_not_called()
+        self.daemon.fork()
+        self.mock_fork.assert_called_once_with()
+        self.mock_exit.assert_not_called()
+
+    def test_successful_child(self):
+        self.mock_fork.return_value = 10
+        self.mock_fork.assert_not_called()
+        self.mock_exit.assert_not_called()
+        self.daemon.fork()
+        self.mock_fork.assert_called_once_with()
+        self.mock_exit.assert_called_once_with(0)
+
+    def test_failed_fork(self):
+        self.mock_fork.side_effect = OSError
+        self.mock_fork.assert_not_called()
+        self.mock_exit.assert_not_called()
+        self.daemon.fork()
+        self.mock_fork.assert_called_once_with()
+        self.mock_exit.assert_called_once_with(1)
