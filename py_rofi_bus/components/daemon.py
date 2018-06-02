@@ -75,8 +75,6 @@ class Daemon(HasPid):
 
     def main(self):
         """Overridden by children"""
-        print('super main')
-        pass
 
     @classmethod
     def bootstrap(cls, *args, **kwargs):
