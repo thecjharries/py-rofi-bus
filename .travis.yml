@@ -34,4 +34,4 @@ install:
   - python setup.py install
 
 script:
-  - python setup.py test
+  - xvfb-run -a "$PYTHON" setup.py test
