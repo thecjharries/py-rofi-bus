@@ -86,3 +86,21 @@ class DecoupleFromEnvironmentUnitTests(DaemonTestCase):
         mock_chdir.assert_called_once_with('/')
         mock_umask.assert_called_once_with(0)
         mock_sets.assert_called_once_with()
+
+
+class DaemonizeUnitTests(DaemonTestCase):
+
+    @patch.object(Daemon, 'fork')
+    @patch.object(Daemon, 'decouple_from_environment')
+    @patch.object(Daemon, 'redirect_file_descriptors')
+    @patch.object(Daemon, 'write_pid_file')
+    def test_calls(self, mock_pid, mock_fd, mock_decouple, mock_fork):
+        mock_pid.assert_not_called()
+        mock_fd.assert_not_called()
+        mock_decouple.assert_not_called()
+        mock_fork.assert_not_called()
+        self.daemon.daemonize()
+        mock_pid.assert_called_once_with()
+        mock_fd.assert_called_once()
+        mock_decouple.assert_called_once_with()
+        mock_fork.assert_called()
