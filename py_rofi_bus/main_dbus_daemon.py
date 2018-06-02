@@ -6,7 +6,6 @@ from py_rofi_bus.dbus import Daemon as DaemonServer
 class MainDbusDaemon(DaemonProcess):
 
     def main(self):
-        print("child main")
         DaemonServer.bootstrap()
 
 if '__main__' == __name__:
