@@ -9,6 +9,7 @@ def mkdirp(directory=None):
         try:
             makedirs(directory)
         except OSError as error:
+            print(error)
             if EEXIST == error.errno and isdir(directory):
                 pass
             else:
