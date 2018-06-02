@@ -88,6 +88,41 @@ class DecoupleFromEnvironmentUnitTests(DaemonTestCase):
         mock_sets.assert_called_once_with()
 
 
+class RedirectFileDescriptorsUnitTests(DaemonTestCase):
+
+    def setUp(self):
+        DaemonTestCase.setUp(self)
+        dup2_patcher = patch('py_rofi_bus.components.daemon.dup2')
+        self.mock_dup2 = dup2_patcher.start()
+        self.addCleanup(dup2_patcher.stop)
+        self.mock_stdout_flush = MagicMock()
+        self.mock_stderr_flush = MagicMock()
+        stdin_patcher = patch('py_rofi_bus.components.daemon.stdin')
+        self.mock_stdin = stdin_patcher.start()
+        self.addCleanup(stdin_patcher.stop)
+        stdout_patcher = patch(
+            'py_rofi_bus.components.daemon.stdout',
+            return_value=MagicMock(
+                flush=self.mock_stdout_flush,
+            ),
+        )
+        self.mock_stdout = stdout_patcher.start()
+        self.addCleanup(stdout_patcher.stop)
+        stderr_patcher = patch(
+            'py_rofi_bus.components.daemon.stderr',
+            return_value=MagicMock(
+                flush=self.mock_stderr_flush,
+            ),
+        )
+        self.mock_stderr = stderr_patcher.start()
+        self.addCleanup(stderr_patcher.stop)
+
+    def test_flush_calls(self):
+        self.mock_stdout_flush.assert_not_called()
+        self.mock_stderr_flush.assert_not_called()
+        self.daemon.redirect_file_descriptors()
+
+
 class DaemonizeUnitTests(DaemonTestCase):
 
     @patch.object(Daemon, 'fork')
