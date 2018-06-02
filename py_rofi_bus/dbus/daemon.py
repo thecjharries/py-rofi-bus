@@ -1,6 +1,7 @@
 # pylint:disable=W,C,R
 from pydbus import SessionBus
-from gi.repository import GLib
+from pydbus.bus import Bus
+from gi.repository.GLib import MainLoop
 
 
 class Daemon(object):
@@ -11,25 +12,47 @@ class Daemon(object):
             <method name='is_running'>
                 <arg type='b' name='response' direction='out'/>
             </method>
+            <method name='start'>
+            </method>
+            <method name='stop'>
+            </method>
         </interface>
     </node>
     """.format(INTERFACE_NAME)
 
+    _is_running = False
+
+    def __init__(self, bus=None, loop=None):
+        if isinstance(bus, Bus):
+            self.bus = Bus
+        else:
+            self.bus = SessionBus()
+        if isinstance(loop, MainLoop):
+            self.loop = loop
+        else:
+            self.loop = MainLoop()
+        self.bus.publish(self.INTERFACE_NAME, self)
+
+    def start(self):
+        if not self._is_running:
+            try:
+                self._is_running = True
+                self.loop.run()
+            except KeyboardInterrupt:
+                self.loop.quit()
+                self._is_running = False
+
     def is_running(self):
-        if self:
-            return True
-        # This should never occur; to be called self must exist
-        return False  # pragma: no cover
+        return self._is_running
+
+    def stop(self):
+        self.loop.quit()
+        self._is_running = False
 
     @staticmethod
     def bootstrap():
-        loop = GLib.MainLoop()
-        bus = SessionBus()
-        bus.publish(Daemon.INTERFACE_NAME, Daemon())
-        try:
-            loop.run()
-        except KeyboardInterrupt:
-            loop.quit()
+        daemon = Daemon()
+        daemon.start()
 
 if '__main__' == __name__:
     Daemon.bootstrap()
