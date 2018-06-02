@@ -92,7 +92,7 @@ class StartUnitTests(DaemonTestCase):
 
 class IsRunningUnitTests(DaemonTestCase):
 
-    def test_true_with_self(self):
+    def test_default_self(self):
         self.assertFalse(self.daemon.is_running())
 
 
