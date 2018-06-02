@@ -54,26 +54,55 @@ class AttachSubparsersUnitTests(DaemonTestCase):
         SUB.assert_called_once()
 
 
-class AddActionDaemonUnitTests(DaemonTestCase):
+class AddActionStartUnitTests(DaemonTestCase):
 
-    @patch('py_rofi_bus.cli.application.Daemon')
+    @patch('py_rofi_bus.cli.daemon.Daemon')
     def test_call(self, mock_daemon):
-        self.daemon.subparsers = MagicMock()
-        mock_daemon.assert_not_called()
-        self.daemon.add_action_daemon()
-        mock_daemon.assert_called_once()
+        PARSER = MagicMock()
+        self.daemon.subparsers = MagicMock(
+            add_parser=PARSER,
+        )
+        PARSER.assert_not_called()
+        self.daemon.add_action_start()
+        PARSER.assert_called_once()
+
+
+class AddActionStopUnitTests(DaemonTestCase):
+
+    @patch('py_rofi_bus.cli.daemon.Daemon')
+    def test_call(self, mock_daemon):
+        PARSER = MagicMock()
+        self.daemon.subparsers = MagicMock(
+            add_parser=PARSER,
+        )
+        PARSER.assert_not_called()
+        self.daemon.add_action_stop()
+        PARSER.assert_called_once()
+
+
+class AddActionStatusUnitTests(DaemonTestCase):
+
+    @patch('py_rofi_bus.cli.daemon.Daemon')
+    def test_call(self, mock_daemon):
+        PARSER = MagicMock()
+        self.daemon.subparsers = MagicMock(
+            add_parser=PARSER,
+        )
+        PARSER.assert_not_called()
+        self.daemon.add_action_status()
+        PARSER.assert_called_once()
 
 
 class BootstrapUnitTests(DaemonTestCase):
 
-    @patch('py_rofi_bus.cli.application.Application')
+    @patch('py_rofi_bus.cli.daemon.Application')
     def test_call(self, mock_app):
         mock_app.assert_not_called()
         self.daemon.bootstrap()
         mock_app.assert_called_once_with()
 
-    @patch('py_rofi_bus.cli.application.Daemon')
-    @patch('py_rofi_bus.cli.application.Application')
+    @patch('py_rofi_bus.cli.daemon.Daemon')
+    @patch('py_rofi_bus.cli.daemon.Application')
     def test_daemon_call(self, mock_app, mock_daemon):
         mock_parse = MagicMock(
             return_value=MagicMock(
