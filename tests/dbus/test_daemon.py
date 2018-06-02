@@ -109,19 +109,11 @@ class BootstrapUnitTests(DaemonTestCase):
 
     def setUp(self):
         DaemonTestCase.setUp(self)
-
-    def test_publish_call(self):
-        bootstrap = Daemon.bootstrap
-        mock_daemon = patch('py_rofi_bus.dbus.daemon.Daemon').start()
-        mock_daemon.assert_not_called()
-        bootstrap()
-        mock_daemon.assert_called_once_with()
+        start_patcher = patch.object(Daemon, 'start')
+        self.mock_start = start_patcher.start()
+        self.addCleanup(start_patcher.stop)
 
     def test_try_except(self):
-        self.mock_run.side_effect = KeyboardInterrupt
-        self.mock_loop.assert_not_called()
-        self.mock_run.assert_not_called()
-        self.mock_quit.assert_not_called()
+        self.mock_start.assert_not_called()
         Daemon.bootstrap()
-        self.mock_run.assert_called_once_with()
-        self.mock_quit.assert_called_once_with()
+        self.mock_start.assert_called_once_with()
