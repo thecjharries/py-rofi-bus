@@ -41,7 +41,8 @@ class RofiDbus(object):
 
     def UpdateActiveWindow(self, active_window_id):
         global_window_ids = global_window_id_list()
-        self.window_ids.remove(active_window_id)
+        if active_window_id in self.window_ids:
+            self.window_ids.remove(active_window_id)
         self.window_ids.insert(0, active_window_id)
         current_window_ids = self.window_ids[:]
         for window_id in global_window_ids:
