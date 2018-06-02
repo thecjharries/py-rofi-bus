@@ -40,3 +40,15 @@ class ConstructorUnitTests(ApplicationTestCase):
         PARSER.assert_not_called()
         app = Application(parent_parser=PARENT)
         PARSER.assert_called_once()
+
+
+class AttachSubparsersUnitTests(ApplicationTestCase):
+
+    def test_call(self):
+        SUB = MagicMock()
+        self.app.parser = MagicMock(
+            add_subparsers=SUB,
+        )
+        SUB.assert_not_called()
+        self.app.attach_subparsers()
+        SUB.assert_called_once()
