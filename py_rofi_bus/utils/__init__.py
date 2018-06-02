@@ -1,2 +1,2 @@
 # pylint:disable=W,C,R
-from .mkdirp import mkdirp
+from .mkdirp_function import mkdirp

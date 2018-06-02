@@ -15,7 +15,7 @@ except GlibError as exception:  # pylint:disable=catching-non-exception
 
 
 def start():
-    check_call(['python', '-m', 'py_rofi_bus.dbus_daemon'])
+    check_call(['python', '-m', 'py_rofi_bus.main_dbus_daemon'])
 
 
 def stop():

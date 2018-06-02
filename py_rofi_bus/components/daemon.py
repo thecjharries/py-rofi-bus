@@ -47,9 +47,9 @@ class Daemon(HasPid):
     ):
         for file_descriptor in [stdout, stderr]:
             file_descriptor.flush()
-        new_stdin = file(daemon_stdin, 'r')
-        new_stdout = file(daemon_stdout, 'a+')
-        new_stderr = file(daemon_stderr, 'a+', 0)
+        new_stdin = open(daemon_stdin, 'r')
+        new_stdout = open(daemon_stdout, 'a+')
+        new_stderr = open(daemon_stderr, 'a+')
         dup2(new_stdin.fileno(), stdin.fileno())
         dup2(new_stdout.fileno(), stdout.fileno())
         dup2(new_stderr.fileno(), stderr.fileno())
@@ -75,8 +75,6 @@ class Daemon(HasPid):
 
     def main(self):
         """Overridden by children"""
-        print('super main')
-        pass
 
     @classmethod
     def bootstrap(cls, *args, **kwargs):
