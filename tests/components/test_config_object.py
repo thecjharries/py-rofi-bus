@@ -56,3 +56,12 @@ class ApplyDictToSelfUnitTests(ConfigTestCase):
         self.assertNotEqual(self.config, self.FINAL)
         self.config.apply_dict_to_self(self.FINAL)
         self.assertEqual(self.config, self.FINAL)
+
+
+class SetWithDefaultsUnitTests(ConfigTestCase):
+
+    @patch.object(Config, 'apply_dict_to_self')
+    def test_call(self, mock_apply):
+        mock_apply.assert_not_called()
+        self.config.set_with_defaults()
+        self.assertEqual(mock_apply.call_count, 2)
