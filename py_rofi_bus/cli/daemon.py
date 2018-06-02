@@ -10,7 +10,7 @@ from pydbus import SessionBus
 BUS = SessionBus()
 try:
     DAEMON = BUS.get("pro.wizardsoftheweb.pyrofibus.daemon")
-except GlibError as exception:  # pylint:disable=catching-non-exception
+except Exception:  # pylint:disable=catching-non-exception
     DAEMON = None
 
 
