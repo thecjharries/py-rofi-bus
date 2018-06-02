@@ -139,3 +139,15 @@ class DaemonizeUnitTests(DaemonTestCase):
         mock_fd.assert_called_once()
         mock_decouple.assert_called_once_with()
         mock_fork.assert_called()
+
+
+class BootstrapUnitTests(DaemonTestCase):
+
+    @patch.object(Daemon, 'daemonize')
+    @patch.object(Daemon, 'main')
+    def test_calls(self, mock_main, mock_daemonize):
+        mock_main.assert_not_called()
+        mock_daemonize.assert_not_called()
+        Daemon.bootstrap()
+        mock_main.assert_called_once_with()
+        mock_daemonize.assert_called_once()
