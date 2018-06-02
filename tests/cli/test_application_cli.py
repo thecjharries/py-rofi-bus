@@ -52,3 +52,13 @@ class AttachSubparsersUnitTests(ApplicationTestCase):
         SUB.assert_not_called()
         self.app.attach_subparsers()
         SUB.assert_called_once()
+
+
+class AddActionDaemonUnitTests(ApplicationTestCase):
+
+    @patch('py_rofi_bus.cli.application.Daemon')
+    def test_call(self, mock_daemon):
+        self.app.subparsers = MagicMock()
+        mock_daemon.assert_not_called()
+        self.app.add_action_daemon()
+        mock_daemon.assert_called_once()
