@@ -1,6 +1,15 @@
 ``py-rofi-bus``
 ~~~~~~~~~~~~~~~
 
+.. image:: https://badge.fury.io/py/py-rofi-bus.svg
+    :target: https://badge.fury.io/py/py-rofi-bus
+
+.. image:: https://travis-ci.org/thecjharries/py-rofi-bus.svg?branch=master
+    :target: https://travis-ci.org/thecjharries/py-rofi-bus
+
+.. image:: https://coveralls.io/repos/github/thecjharries/py-rofi-bus/badge.svg?branch=master
+    :target: https://coveralls.io/github/thecjharries/py-rofi-bus?branch=master
+
 This package provides a DBus foundation for ``rofi``.
 
 Current version is a proof-of-concept with a simple window switcher. The API will potentially change drastically.
