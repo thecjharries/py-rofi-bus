@@ -9,6 +9,14 @@ from unittest import TestCase
 from mock import call, MagicMock, patch
 
 from py_rofi_bus.cli import Daemon
+from py_rofi_bus.cli.daemon import DAEMON, start, status, stop
+
+
+@patch('py_rofi_bus.cli.daemon.check_call')
+def test_start(mock_call):
+    mock_call.assert_not_called()
+    start()
+    mock_call.assert_called_once()
 
 
 class DaemonTestCase(TestCase):
