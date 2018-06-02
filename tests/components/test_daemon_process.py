@@ -50,6 +50,7 @@ class ForkUnitTests(DaemonTestCase):
         self.addCleanup(exit_patcher.stop)
 
     def test_successful_parent(self):
+        self.mock_fork.return_value = 0
         self.mock_fork.assert_not_called()
         self.mock_exit.assert_not_called()
         self.daemon.fork()
