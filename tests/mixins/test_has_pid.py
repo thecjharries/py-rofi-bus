@@ -149,3 +149,20 @@ class ClearPidFileUnitTests(HasPidTestCase):
         self.mock_killpg.assert_called_once()
         self.mock_remove.assert_called_once()
         self.mock_open.assert_called_once()
+
+
+class WritePidFileUnitTests(HasPidTestCase):
+
+    @patch('py_rofi_bus.components.mixins.has_pid.open')
+    @patch.object(HasPid, 'get_pid_file_name')
+    @patch('py_rofi_bus.components.mixins.has_pid.getpgid')
+    @patch('py_rofi_bus.components.mixins.has_pid.getpid')
+    def test_call(self, mock_pid, mock_pgid, mock_get, mock_open):
+        mock_open.return_value = MagicMock(spec=file)
+        mock_pid.assert_not_called()
+        mock_pgid.assert_not_called()
+        mock_get.assert_not_called()
+        self.has_pid.write_pid_file()
+        mock_pid.assert_called_once()
+        mock_pgid.assert_called_once()
+        mock_get.assert_called_once()
