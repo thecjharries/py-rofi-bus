@@ -65,3 +65,19 @@ class SetWithDefaultsUnitTests(ConfigTestCase):
         mock_apply.assert_not_called()
         self.config.set_with_defaults()
         self.assertEqual(mock_apply.call_count, 2)
+
+
+class ConfigDirUnitTests(ConfigTestCase):
+
+    @patch('py_rofi_bus.components.config.join')
+    def test_with_application(self, mock_join):
+        self.config['application'] = 'yup'
+        mock_join.assert_not_called()
+        self.config.config_dir
+        mock_join.assert_called_once()
+
+    @patch('py_rofi_bus.components.config.join')
+    def test_without_application(self, mock_join):
+        mock_join.assert_not_called()
+        self.config.config_dir
+        mock_join.assert_not_called()
