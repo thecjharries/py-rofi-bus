@@ -21,38 +21,57 @@ class DaemonTestCase(TestCase):
         del self.daemon
 
     def construct_daemon(self):
+        self.mock_run = MagicMock()
+        self.mock_quit = MagicMock()
+        self.mock_loop = MagicMock(
+            return_value=MagicMock(
+                run=self.mock_run,
+                quit=self.mock_quit,
+            ),
+        )
+        loop_patcher = patch(
+            'py_rofi_bus.dbus.daemon.MainLoop',
+            # MagicMock,
+            self.mock_loop,
+        )
+        self.mock_loop = loop_patcher.start()
+        self.mock_bus = MagicMock()
+        self.addCleanup(loop_patcher.stop)
+        bus_patcher = patch(
+            'py_rofi_bus.dbus.daemon.SessionBus',
+            self.mock_bus,
+        )
+        self.mock_bus = bus_patcher.start()
+        self.addCleanup(bus_patcher.stop)
         self.daemon = Daemon()
+
+
+class ConstructorUnitTests(DaemonTestCase):
+
+    def test_empty_ctor_inputs(self):
+        self.mock_loop.assert_called_once_with()
+        self.mock_bus.assert_called_once_with()
+
+    def test_filled_ctor_inputs(self):
+        BUS = MagicMock()
+        LOOP = MagicMock()
+        self.mock_loop.reset_mock()
+        self.mock_bus.reset_mock()
+        self.daemon = Daemon(bus=BUS, loop=LOOP)
+        self.assert_equal(BUS, self.daemon.bus)
+        self.assert_equal(LOOP, self.daemon.loop)
 
 
 class IsRunningUnitTests(DaemonTestCase):
 
     def test_true_with_self(self):
-        self.assertTrue(self.daemon.is_running())
+        self.assertFalse(self.daemon.is_running())
 
 
 class BootstrapUnitTests(DaemonTestCase):
 
     def setUp(self):
         DaemonTestCase.setUp(self)
-        self.mock_run = MagicMock()
-        self.mock_quit = MagicMock()
-        self.mock_loop = MagicMock(
-            MainLoop=MagicMock(
-                return_value=MagicMock(
-                    run=self.mock_run,
-                    quit=self.mock_quit,
-                ),
-            ),
-        )
-        glib_patcher = patch(
-            'py_rofi_bus.dbus.daemon.GLib',
-            self.mock_loop,
-        )
-        self.mock_glib = glib_patcher.start()
-        self.addCleanup(glib_patcher.stop)
-        bus_patcher = patch('py_rofi_bus.dbus.daemon.SessionBus')
-        self.mock_bus = bus_patcher.start()
-        self.addCleanup(bus_patcher.stop)
 
     def test_publish_call(self):
         bootstrap = Daemon.bootstrap
