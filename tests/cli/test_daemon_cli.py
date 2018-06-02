@@ -95,25 +95,24 @@ class AddActionStatusUnitTests(DaemonTestCase):
 
 class BootstrapUnitTests(DaemonTestCase):
 
-    @patch('py_rofi_bus.cli.daemon.Application')
+    @patch('py_rofi_bus.cli.daemon.Daemon')
     def test_call(self, mock_app):
         mock_app.assert_not_called()
         self.daemon.bootstrap()
         mock_app.assert_called_once_with()
 
     @patch('py_rofi_bus.cli.daemon.Daemon')
-    @patch('py_rofi_bus.cli.daemon.Application')
-    def test_daemon_call(self, mock_app, mock_daemon):
+    def test_daemon_call(self, mock_daemon):
         mock_parse = MagicMock(
             return_value=MagicMock(
                 subcommand='daemon'
             ),
         )
-        mock_app.return_value = MagicMock(
+        mock_daemon.return_value = MagicMock(
             parser=MagicMock(
                 parse_args=mock_parse,
             ),
         )
-        mock_app.assert_not_called()
+        mock_daemon.assert_not_called()
         self.daemon.bootstrap()
-        mock_app.assert_called_once_with()
+        mock_daemon.assert_called_once_with()
