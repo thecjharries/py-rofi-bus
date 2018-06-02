@@ -38,7 +38,7 @@ class Config(dict):
 
     @property
     def config_dir(self):
-        if self['application']:
+        if 'application' in self and self['application']:
             return join(
                 self.BASE_CONFIG_DIR,
                 self['application'],
