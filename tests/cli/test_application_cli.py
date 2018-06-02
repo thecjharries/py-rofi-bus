@@ -62,3 +62,29 @@ class AddActionDaemonUnitTests(ApplicationTestCase):
         mock_daemon.assert_not_called()
         self.app.add_action_daemon()
         mock_daemon.assert_called_once()
+
+
+class BootstrapUnitTests(ApplicationTestCase):
+
+    @patch('py_rofi_bus.cli.application.Application')
+    def test_call(self, mock_app):
+        mock_app.assert_not_called()
+        self.app.bootstrap()
+        mock_app.assert_called_once_with()
+
+    @patch('py_rofi_bus.cli.application.Daemon')
+    @patch('py_rofi_bus.cli.application.Application')
+    def test_daemon_call(self, mock_app, mock_daemon):
+        mock_parse = MagicMock(
+            return_value=MagicMock(
+                subcommand='daemon'
+            ),
+        )
+        mock_app.return_value = MagicMock(
+            parser=MagicMock(
+                parse_args=mock_parse,
+            ),
+        )
+        mock_app.assert_not_called()
+        self.app.bootstrap()
+        mock_app.assert_called_once_with()
