@@ -60,7 +60,7 @@ The DBus server sets up the communication hub. It can be launched via
 
 .. code::
 
-    $ python "$(python -m site --user-site)/py-rofi-bus/dbus_server.py"
+    $ python "$(python -m site --user-site)/py_rofi_bus/dbus_server.py"
 
 This process provides functions to track the active window, get a list of active windows, and switch to a specified window.
 
@@ -71,7 +71,7 @@ The window listener sets up the XCB event monitoring. It can be launched via
 
 .. code::
 
-    $ python "$(python -m site --user-site)/py-rofi-bus/window_listener.py"
+    $ python "$(python -m site --user-site)/py_rofi_bus/window_listener.py"
 
 As before, it must remain active. It monitors the screen's root window for changes in the active window, and reports those changes to the dbus server.
 
@@ -82,6 +82,7 @@ With those two components in place, it's possible to launch the provided modi.
 
 .. code::
 
-    $ rofi -modi window_example:"$(python -m site --user-site)/py-rofi-bus/rofi_window_script.py" -show window_example
+    $ chmod +x "$(python -m site --user-site)/py_rofi_bus/rofi_window_script.py"
+    $ rofi -modi window_example:"$(python -m site --user-site)/py_rofi_bus/rofi_window_script.py" -show window_example
 
 This modi is almost identical to the stock ``window`` modi. However, using the dbus server, it sorts the windows by activity. When a window is activated, it's pushed to the top of the stack.
