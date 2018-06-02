@@ -46,6 +46,20 @@ def test_statusable_daemon(mock_bus):
     MOCK_STATUS.assert_called_once_with()
 
 
+@patch('py_rofi_bus.cli.daemon.SessionBus')
+@patch('py_rofi_bus.cli.daemon.DAEMON', None)
+def test_no_daemon(mock_bus):
+    MOCK_DAEMON.reset_mock()
+    MOCK_STOP.reset_mock()
+    MOCK_STATUS.reset_mock()
+    MOCK_STATUS.assert_not_called()
+    status()
+    MOCK_STATUS.assert_not_called()
+    MOCK_STOP.assert_not_called()
+    stop()
+    MOCK_STOP.assert_not_called()
+
+
 class DaemonTestCase(TestCase):
 
     def setUp(self):
