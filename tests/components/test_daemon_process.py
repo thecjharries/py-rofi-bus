@@ -71,3 +71,18 @@ class ForkUnitTests(DaemonTestCase):
         self.daemon.fork()
         self.mock_fork.assert_called_once_with()
         self.mock_exit.assert_called_once_with(1)
+
+
+class DecoupleFromEnvironmentUnitTests(DaemonTestCase):
+
+    @patch('py_rofi_bus.components.daemon.setsid')
+    @patch('py_rofi_bus.components.daemon.umask')
+    @patch('py_rofi_bus.components.daemon.chdir')
+    def test_calls(self, mock_chdir, mock_umask, mock_sets):
+        mock_chdir.assert_not_called()
+        mock_umask.assert_not_called()
+        mock_sets.assert_not_called()
+        self.daemon.decouple_from_environment()
+        mock_chdir.assert_called_once_with('/')
+        mock_umask.assert_called_once_with(0)
+        mock_sets.assert_called_once_with()
