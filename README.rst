@@ -100,7 +100,7 @@ Stops the daemon. This kills the daemon's process.
 ``load_apps``
 >>>>>>>>>>>>>
 
-This is an experimental feature that attempts to run any executable found in the configured application directory. Files must be marked as executable for the script to be able to load them. So far my cursory tests have demonstrated an ability to load and control both simple scripts and more complicated things like daemons. They've also revealed that I should have planned a bit better and will probably face some refactoring soon.
+This is an experimental feature that attempts to run any executable found in the configured ``load_from`` directory. Files must be marked as executable for the script to be able to load them. So far my cursory tests have demonstrated an ability to load and control both simple scripts and more complicated things like daemons. They've also revealed that I should have planned a bit better and will probably face some refactoring soon.
 
 Example App
 ===========
