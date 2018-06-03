@@ -78,3 +78,26 @@ CLI Interaction
       -h, --help           show this help message and exit
 
 The CLI is independent of the daemon so it can be used to restart the daemon.
+
+DBus Interface
+<<<<<<<<<<<<<<
+
+``start``
+>>>>>>>>>
+
+Starts the daemon. Doesn't actually do anything (except I don't think I'm properly watching the PID file so it actually just restarts the daemon).
+
+``stop``
+>>>>>>>>
+
+Stops the daemon. This kills the daemon's process.
+
+``is_running``
+>>>>>>>>>>>>>>
+
+``True`` if the daemon is running; ``GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown`` if the daemon is not running.
+
+``load_apps``
+>>>>>>>>>>>>>
+
+This is an experimental feature that attempts to run any executable found in the configured application directory. Files must be marked as executable for the script to be able to load them. So far my cursory tests have demonstrated an ability to load and control both simple scripts and more complicated things like daemons. They've also revealed that I should have planned a bit better and will probably face some refactoring soon.
