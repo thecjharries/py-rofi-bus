@@ -38,9 +38,10 @@ script:
 
 after_script:
   # stop the container
-  - chown -R $(whoami) .
+  - sudo chown -R $(whoami) .
   - ls -alh $PWD
   - cat .coverage
+  - sed -i "s,/app,${PWD},g" .coverage
   - coveralls
   - docker exec -e TRAVIS="$TRAVIS" -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" "$(cat container_id)" coveralls
   - docker stop "$(cat container_id)"
