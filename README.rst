@@ -101,3 +101,65 @@ Stops the daemon. This kills the daemon's process.
 >>>>>>>>>>>>>
 
 This is an experimental feature that attempts to run any executable found in the configured application directory. Files must be marked as executable for the script to be able to load them. So far my cursory tests have demonstrated an ability to load and control both simple scripts and more complicated things like daemons. They've also revealed that I should have planned a bit better and will probably face some refactoring soon.
+
+Example App
+===========
+
+I updated the proof-of-concept example. It cast some light on the package's deficiencies. Use it with a grain of salt. Many things that are manual now aren't planned to be manual forever.
+
+Initial Setup
+<<<<<<<<<<<<<
+
+Assuming you've installed ``py-rofi-bus``, you'll need to create the configuration directory.
+
+.. code:: shell-session
+
+    $ mkdir -p "$XDG_CONFIG_HOME/wotw/py-rofi-bus/{apps-enabled,pids}"
+
+To run the scripts, they must be in the ``load_from`` config directory, which is probably the one above unless you changed things.
+
+.. code:: shell-session
+
+    $ cd path/to/repo/or/package
+    $ ls -l examples/rofi-alt-tab
+    total 16
+    -rw-r--r--. 1 cjharries cjharries 2457 Jun  3 13:06 active_window_monitor_daemon.py
+    -rw-r--r--. 1 cjharries cjharries 2231 Jun  3 13:06 dbus_window_daemon.py
+    -rw-r--r--. 1 cjharries cjharries 4826 Jun  3 13:06 ordered_window_script.py
+    $ chmod u+x examples/rofi-alt-tab/*.py
+    $ source <(
+        realpath examples/rofi-alt-tab/*.py | \
+            awk '{ print "ln -s "$0" /home/cjharries/.config/wotw/py-rofi-bus/apps-enabled"; }' \
+        )
+    $ ls -l ~/.config/wotw/py-rofi-bus/apps-enabled
+    total 12
+    lrwxrwxrwx. 1 cjharries cjharries 103 Jun  3 18:00 active_window_monitor_daemon.py -> <snip>/examples/rofi-alt-tab/active_window_monitor_daemon.py
+    lrwxrwxrwx. 1 cjharries cjharries  93 Jun  3 18:00 dbus_window_daemon.py -> <snip>/examples/rofi-alt-tab/dbus_window_daemon.py
+    lrwxrwxrwx. 1 cjharries cjharries  96 Jun  3 18:00 ordered_window_script.py -> <snip>/examples/rofi-alt-tab/ordered_window_script.py
+
+If you're not comfortable symlinking the files or don't feel like going to the trouble, you can always do a vanilla copy.
+
+Launching the Daemon
+<<<<<<<<<<<<<<<<<<<<
+
+Run the following command:
+
+.. code:: shell-session
+
+    $ py-rofi-bus daemon start
+
+Launching the Example
+<<<<<<<<<<<<<<<<<<<<<
+
+Once the files are in the ``load_from`` directory and the daemon is running, you'll have to either add another file or pop open a REPL.
+
+.. code:: shell-session
+
+    $ python
+
+    >>> import pydbus
+    >>> bus = pydbus.SessionBus()
+    >>> loader = bus.get('pro.wizardsoftheweb.pyrofibus.daemon.window_properties')
+    >>> loader.load_apps()
+    >>> exit()
+
