@@ -136,6 +136,7 @@ class OrderedWindowScript(Script):
         self.row_order, self.max = self.convert_format_to_callbacks(
             window_format)
         self.items = self.get_all_windows()
+        self.items.append(self.items.pop(0))
 
     def format_output(self):
         self.format_string = ''
