@@ -102,6 +102,51 @@ Stops the daemon. This kills the daemon's process.
 
 This is an experimental feature that attempts to run any executable found in the configured ``load_from`` directory. Files must be marked as executable for the script to be able to load them. So far my cursory tests have demonstrated an ability to load and control both simple scripts and more complicated things like daemons. They've also revealed that I should have planned a bit better and will probably face some refactoring soon.
 
+``systemd`` Integration
+<<<<<<<<<<<<<<<<<<<<<<<
+
+``MainDbusDaemon`` can easily be run as a ``user`` ``systemd`` ``unit``. First a ``target`` that binds to the ``graphical-session.target`` must be made.
+
+.. code:: shell-session
+
+    $ cat $XDG_CONF_HOME/systemd/user/my-first.target
+    [Unit]
+    Description=Lives and dies with the graphical session
+    BindsTo=graphical-session.target
+
+We can now bind a ``unit`` to the ``target``, meaning it will also be dependent on the ``graphical-session``. Note that the paths below assume a ``--user`` install. You'll need to update them if ``py-rofi-bus`` was installed somewhere else.
+
+.. code:: shell-session
+
+    $ cat $XDG_CONF_HOME/systemd/user/pyrofibus.service
+    [Unit]
+    Description=py-rofi-bus
+    PartOf=graphical-session.target
+
+    [Service]
+    Type=forking
+    ExecStart=%h/.local/bin/py-rofi-bus daemon start
+    ExecStop=%h/.local/bin/py-rofi-bus daemon stop
+    PIDFile=%h/.config/wotw/py-rofi-bus/.pid
+
+    [Install]
+    WantedBy=my-first.target
+
+    # Start the service to make sure it works
+    $ systemctl --user start pyrofibus.service
+
+    # Assuming it does, you can enable it to run automatically
+    $ systemctl --user enable pyrofibus.service
+
+Finally, to trigger ``my-first.target``, add these commands somewhere in your startup files. I run ``i3`` and these are executed at the end of my ``i3`` config file. The tail end of your ``.whateverrc`` file would work well too.
+
+.. code:: bash
+
+    # Some of these might not be necessary. I never weeded out the duds.
+    # You'll need some of these variables to be able to trigger the target.
+    systemctl --user import-environment USER HOME PATH DISPLAY XAUTHORITY
+    systemctl --user start my-first.target
+
 Example App
 ===========
 
