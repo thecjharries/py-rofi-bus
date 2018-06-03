@@ -3,8 +3,10 @@ from pydbus import SessionBus
 from pydbus.bus import Bus
 from gi.repository.GLib import MainLoop
 
+from py_rofi_bus.components.mixins import ManagesProcesses
 
-class Daemon(object):
+
+class Daemon(ManagesProcesses):
     INTERFACE_NAME = "pro.wizardsoftheweb.pyrofibus.daemon"
     dbus = """
     <node>
@@ -16,13 +18,17 @@ class Daemon(object):
             </method>
             <method name='stop'>
             </method>
+            <method name='load_apps'>
+                <arg type='i' name='response' direction='out'/>
+            </method>
         </interface>
     </node>
     """.format(INTERFACE_NAME)
 
     _is_running = False
 
-    def __init__(self, bus=None, loop=None):
+    def __init__(self, bus=None, loop=None, *args, **kwargs):
+        super(Daemon, self).__init__(*args, **kwargs)
         if bus is None:
             self.bus = SessionBus()
         else:
@@ -49,6 +55,13 @@ class Daemon(object):
     def stop(self):
         self.loop.quit()
         self._is_running = False
+
+    def load_apps(self):
+        old_length = len(self.managed_processes)
+        new_scripts = self.check_for_new_scripts()
+        self.load_new_scripts(new_scripts)
+        new_length = len(self.managed_processes)
+        return new_length - old_length
 
     @staticmethod
     def bootstrap():

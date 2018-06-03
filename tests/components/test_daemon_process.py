@@ -22,9 +22,6 @@ class DaemonTestCase(TestCase):
         del self.daemon
 
     def construct_daemon(self):
-        register_patcher = patch('py_rofi_bus.components.daemon.register')
-        self.mock_register = register_patcher.start()
-        self.addCleanup(register_patcher.stop)
         self.mock_pid = MagicMock()
         haspid_patcher = patch(
             'py_rofi_bus.components.daemon.HasPid.__init__',
@@ -143,18 +140,6 @@ class DaemonizeUnitTests(DaemonTestCase):
         mock_fd.assert_called_once()
         mock_decouple.assert_called_once_with()
         mock_fork.assert_called()
-
-
-class RemoveUnitTests(DaemonTestCase):
-
-    @patch.object(Daemon, 'get_pid_file_name')
-    @patch('py_rofi_bus.components.daemon.remove')
-    def test_calls(self, mock_remove, mock_get):
-        mock_get.assert_not_called()
-        mock_remove.assert_not_called()
-        self.daemon.remove_pid()
-        mock_get.assert_called_once_with()
-        mock_remove.assert_called_once()
 
 
 class BootstrapUnitTests(DaemonTestCase):
