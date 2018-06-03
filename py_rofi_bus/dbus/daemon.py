@@ -28,7 +28,7 @@ class Daemon(ManagesProcesses):
     _is_running = False
 
     def __init__(self, bus=None, loop=None, *args, **kwargs):
-        super(ManagesProcesses, self).__init__(*args, **kwargs)
+        super(Daemon, self).__init__(*args, **kwargs)
         if bus is None:
             self.bus = SessionBus()
         else:
