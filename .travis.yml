@@ -16,6 +16,7 @@ env:
 before_install:
   # Create a docker image called "myimage"
   # - docker build -t myimage -f "$DOCKER_FILE" .
+  - pip install coveralls
   - docker pull wizardsoftheweb/py-rofi-bus-images:"$DOCKER_TAG"
 
 before_script:
