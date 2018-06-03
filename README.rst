@@ -54,7 +54,7 @@ As of ``0.2.0``, logging and help menus are pretty sparse. Expect things to brea
 ``MainDbusDaemon``
 ==================
 
-The (current) core of ``py-rofi-bus`` is ``MainDbusDaemon``, which combines all of the important features in some manner with implementing any of them very well. ``MainDbusDaemon`` forks to become a daemon and runs in the background. It publishes a very simple interface to the ``SessionBus`` and waits for interaction from the user. It currently cannot resuscitate itself should its main loop be killed or exited.
+The (current) core of ``py-rofi-bus`` is ``MainDbusDaemon``, which combines all of the important features in some manner without implementing any of them very well. ``MainDbusDaemon`` forks to become a daemon and runs in the background. It publishes a very simple interface to the ``SessionBus`` and waits for interaction from the user. It currently cannot resuscitate itself should its main loop be killed or exited.
 
 CLI Interaction
 <<<<<<<<<<<<<<<
