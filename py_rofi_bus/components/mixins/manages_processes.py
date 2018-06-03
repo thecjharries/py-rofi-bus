@@ -1,6 +1,6 @@
 # pylint: disable=W,C,R
 from atexit import register
-from os import kill, listdir
+from os import kill, listdir, remove
 from os.path import join
 from signal import SIGKILL
 from subprocess import PIPE, Popen
@@ -57,6 +57,7 @@ class ManagesProcesses(HasConfig):
             full_pid_path = join(self.config['pid_folder'], pid_name)
             with open(full_pid_path, 'r') as pid_file:
                 kill(int(pid_file.read()), SIGKILL)
+            remove(full_pid_path)
 
 
 test = ManagesProcesses()
