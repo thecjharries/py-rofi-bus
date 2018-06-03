@@ -1,10 +1,12 @@
 # pylint:disable=W,C,R
 from __future__ import print_function
 
+from atexit import register
 from os import (
     chdir,
     dup2,
     fork,
+    remove,
     setsid,
     umask,
 )
@@ -71,7 +73,11 @@ class Daemon(HasPid):
             daemon_stdout,
             daemon_stderr,
         )
+        register(self.remove_pid)
         self.write_pid_file()
+
+    def remove_pid(self):
+        remove(self.get_pid_file_name())
 
     def main(self):
         """Overridden by children"""
