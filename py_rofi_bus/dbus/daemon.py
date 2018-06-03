@@ -29,6 +29,9 @@ class Daemon(ManagesProcesses):
 
     def __init__(self, bus=None, loop=None, *args, **kwargs):
         super(Daemon, self).__init__(*args, **kwargs)
+        self.initialize_bus(bus, loop)
+
+    def initialize_bus(self, bus=None, loop=None):
         if bus is None:
             self.bus = SessionBus()
         else:
@@ -63,9 +66,9 @@ class Daemon(ManagesProcesses):
         new_length = len(self.managed_processes)
         return new_length - old_length
 
-    @staticmethod
-    def bootstrap():
-        daemon = Daemon()
+    @classmethod
+    def bootstrap(cls):
+        daemon = cls()
         daemon.start()
 
 if '__main__' == __name__:
