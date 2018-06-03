@@ -1,6 +1,6 @@
 # pylint:disable=W,C,R
 
-from os import getpgid, getpid, killpg, remove
+from os import getpid, kill, remove
 from os.path import exists, join
 
 from py_rofi_bus.components.mixins import HasConfig
@@ -33,14 +33,14 @@ class HasPid(HasConfig):
         pid_file_name = self.get_pid_file_name()
         if exists(pid_file_name):
             with open(pid_file_name, 'r') as pid_file:
-                pgid = pid_file.read().strip()
-            if pgid:
+                pid = pid_file.read().strip()
+            if pid:
                 try:
-                    killpg(int(pgid), 9)
+                    kill(int(pid), 9)
                 except OSError:
                     pass
             remove(pid_file_name)
 
     def write_pid_file(self):
         with open(self.get_pid_file_name(), 'w') as pid_file:
-            pid_file.write(str(getpgid(getpid())))
+            pid_file.write(str(getpid()))
