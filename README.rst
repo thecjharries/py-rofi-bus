@@ -19,7 +19,7 @@ Current version is a proof-of-concept with a simple window switcher. The API wil
 Features
 --------
 
-(These are all planned; ``0.1.0`` doesn't expose much of an API)
+(These are all planned; ``0.2.0`` doesn't expose much of an API)
 
 * Spawn and populate scripts/modi via ``py-rofi-bus``
 * Save information from scripts/modi
