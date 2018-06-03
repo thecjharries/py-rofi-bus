@@ -50,13 +50,19 @@ class ManagesProcesses(HasConfig):
 
     def wipe_processes(self):
         for _, process in list(self.managed_processes.items()):
-            kill(process.pid, SIGKILL)
+            try:
+                kill(process.pid, SIGKILL)
+            except OSError:
+                pass
 
     def demolish_pid_files(self):
         for pid_name in listdir(self.config['pid_folder']):
             full_pid_path = join(self.config['pid_folder'], pid_name)
             with open(full_pid_path, 'r') as pid_file:
-                kill(int(pid_file.read()), SIGKILL)
+                try:
+                    kill(int(pid_file.read()), SIGKILL)
+                except OSError:
+                    pass
             remove(full_pid_path)
 
 
