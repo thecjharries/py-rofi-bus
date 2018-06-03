@@ -116,7 +116,7 @@ Assuming you've installed ``py-rofi-bus``, you'll need to create the configurati
 
     $ mkdir -p "$XDG_CONFIG_HOME/wotw/py-rofi-bus/{apps-enabled,pids}"
 
-To run the scripts, they must be in the ``load_from`` config directory, which is probably the one above unless you changed things.
+To run the daemons, they must be in the ``load_from`` config directory, which is probably the one above unless you changed things.
 
 .. code:: shell-session
 
@@ -128,21 +128,28 @@ To run the scripts, they must be in the ``load_from`` config directory, which is
     -rw-r--r--. 1 cjharries cjharries 4826 Jun  3 13:06 ordered_window_script.py
     $ chmod u+x examples/rofi-alt-tab/*.py
     $ source <(
-        realpath examples/rofi-alt-tab/*.py | \
-            awk '{ print "ln -s "$0" /home/cjharries/.config/wotw/py-rofi-bus/apps-enabled"; }' \
+        realpath examples/rofi-alt-tab/*daemon.py | \
+            awk '{ print "ln -s "$0" $XDG_CONFIG_HOME/wotw/py-rofi-bus/apps-enabled"; }' \
         )
     $ ls -l ~/.config/wotw/py-rofi-bus/apps-enabled
     total 12
     lrwxrwxrwx. 1 cjharries cjharries 103 Jun  3 18:00 active_window_monitor_daemon.py -> <snip>/examples/rofi-alt-tab/active_window_monitor_daemon.py
     lrwxrwxrwx. 1 cjharries cjharries  93 Jun  3 18:00 dbus_window_daemon.py -> <snip>/examples/rofi-alt-tab/dbus_window_daemon.py
-    lrwxrwxrwx. 1 cjharries cjharries  96 Jun  3 18:00 ordered_window_script.py -> <snip>/examples/rofi-alt-tab/ordered_window_script.py
 
 If you're not comfortable symlinking the files or don't feel like going to the trouble, you can always do a vanilla copy.
 
-Launching the Daemon
-<<<<<<<<<<<<<<<<<<<<
+You'll also need to expose the script in some way. A generally recommended idea is to store scripts in a common location.
 
-Run the following command:
+.. code:: shell-session
+
+    $ mkdir -p $XDG_CONFIG_HOME/rofi/scripts
+    $ cd path/to/repo/or/package
+    $ ln -s $(realpath examples/rofi-alt-tab/ordered_window_script.py) $XDG_CONFIG_HOME/rofi/scripts
+
+Launching the Main Daemon
+<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Run the following command.
 
 .. code:: shell-session
 
@@ -163,3 +170,26 @@ Once the files are in the ``load_from`` directory and the daemon is running, you
     >>> loader.load_apps()
     >>> exit()
 
+Running the Modi
+<<<<<<<<<<<<<<<<
+
+With the script accessible and the daemons running, you can either execute it as a one-off or add it to your configuration.
+
+.. code:: shell-session
+
+    # Runs it as a one-off
+    $ rofi -modi alttab:~/.config/rofi/scripts/ordered_window_script.py -show alttab
+
+    # Adds it to the existing config
+    $ export ROFI_CONFIG_FILE=$(rofi --help | awk 'BEGIN{ IGNORECASE = 1 };/configuration file/{ print $3; }')
+    $ [ -f $ROFI_CONFIG_FILE ] || rofi -dump-config > $ROFI_CONFIG_FILE
+    $ sed        \
+        -i=.bak  \
+        -e 's@\([^-]modi:.*\)";@\1,alttab:~/.config/rofi/scripts/ordered_window_script.py";@g' \
+        $ROFI_CONFIG_FILE
+    $ rofi -show alttab
+
+Conclusion
+<<<<<<<<<<
+
+Like its predecessor, this example (and the package it's from) is still very much in its infancy. Expect things to change. This is too much work to do when Python could it for me.
