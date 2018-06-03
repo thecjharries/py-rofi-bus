@@ -27,6 +27,9 @@ class Config(dict):
 
     def __init__(self, *args, **kwargs):
         self.set_with_defaults(**kwargs)
+        self.init_directories()
+
+    def init_directories(self):
         mkdirp(self.config_dir)
         mkdirp(self['load_from'])
         mkdirp(self['pid_folder'])
