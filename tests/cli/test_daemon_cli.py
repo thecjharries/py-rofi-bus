@@ -60,6 +60,22 @@ def test_no_daemon(mock_bus):
     MOCK_STOP.assert_not_called()
 
 
+@patch(
+    'py_rofi_bus.cli.daemon.SessionBus',
+    MagicMock(
+        return_value=MagicMock(
+            get=MagicMock(
+                side_effect=Exception,
+            ),
+        ),
+    ),
+)
+def test_exception_throw():
+    MOCK_DAEMON.reset_mock()
+    MOCK_STOP.reset_mock()
+    MOCK_STATUS.reset_mock()
+
+
 class DaemonTestCase(TestCase):
 
     def setUp(self):

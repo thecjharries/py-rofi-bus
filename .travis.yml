@@ -1,20 +1,34 @@
 ---
+# https://github.com/pygobject/pygobject-travis-ci-docker-examples/blob/master/.travis.yml
 notifications:
   email:
     on_success: never
     on_failure: change
 
-cache: pip
-
-sudo: true
-
+sudo: required
+services: docker
 language: python
 python:
-  - '2.7'
-  - '3.6'
+    - "3.6"
 
-install:
-  - python setup.py install
+env:
+  - DOCKER_TAG="python2" PYTHON="python" PIP="pip2"
+  - DOCKER_TAG="python3" PYTHON="python3" PIP="pip3"
+
+before_install:
+  - pip install coveralls
+  - docker pull wizardsoftheweb/py-rofi-bus-images:"$DOCKER_TAG"
+
+before_script:
+  - docker run --volume "$(pwd):/app" --workdir "/app" --tty --detach wizardsoftheweb/py-rofi-bus-images:"$DOCKER_TAG" bash > container_id
 
 script:
-  - python setup.py test
+  - docker exec "$(cat container_id)" mkdir -p /usr/local/lib/python3.6/site-packages/
+  - docker exec "$(cat container_id)" "$PYTHON" setup.py install
+  - docker exec "$(cat container_id)" xvfb-run -a "$PYTHON" setup.py test
+
+after_script:
+  - sudo chown -R $(whoami) .
+  - sed -i "s,/app/,${PWD}/,g" .coverage
+  - coveralls
+  - docker stop "$(cat container_id)"
