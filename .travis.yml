@@ -35,5 +35,5 @@ script:
 
 after_script:
   # stop the container
-  - docker exec "$(cat container_id)" -e TRAVIS="$TRAVIS" -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" coveralls
+  - docker exec -e TRAVIS="$TRAVIS" -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" "$(cat container_id)" coveralls
   - docker stop "$(cat container_id)"
