@@ -22,6 +22,7 @@ class ActiveWindowMonitorDaemon(Daemon):
         super(ActiveWindowMonitorDaemon, self).__init__(*args, **kwargs)
         self.event_queue = deque()
         self.set_up_xcffib()
+        self.set_up_bus()
 
     def set_up_xcffib(self):
         self.connection = xcffib.connect()
@@ -31,6 +32,11 @@ class ActiveWindowMonitorDaemon(Daemon):
             xcffib.xproto.CW.EventMask,
             [xcffib.xproto.EventMask.PropertyChange],
         ).check()
+
+    def set_up_bus(self):
+        self.bus = SessionBus()
+        self.listener = self.bus.get(
+            'pro.wizardsoftheweb.pyrofibus.daemon.window_properties')
 
     def fill_queue(self):
         current_event = self.connection.wait_for_event()
@@ -57,7 +63,7 @@ class ActiveWindowMonitorDaemon(Daemon):
             .name\
             .to_string()
         if '_NET_ACTIVE_WINDOW' == atom_name:
-            print('cool')
+            self.listener.update_active_window(get_active_window().reply())
 
     def drain_queue(self):
         for event in self.events:
