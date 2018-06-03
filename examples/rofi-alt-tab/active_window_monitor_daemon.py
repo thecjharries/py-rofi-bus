@@ -20,9 +20,6 @@ class ActiveWindowMonitorDaemon(Daemon):
     def __init__(self, *args, **kwargs):
         kwargs['pid_name'] = 'active_window_monitor_daemon'
         super(ActiveWindowMonitorDaemon, self).__init__(*args, **kwargs)
-        self.event_queue = deque()
-        self.set_up_xcffib()
-        self.set_up_bus()
 
     def set_up_xcffib(self):
         self.connection = xcffib.connect()
@@ -32,6 +29,8 @@ class ActiveWindowMonitorDaemon(Daemon):
             xcffib.xproto.CW.EventMask,
             [xcffib.xproto.EventMask.PropertyChange],
         ).check()
+        print(int(self.connection.core.GetWindowAttributes(
+            self.root).reply().your_event_mask))
 
     def set_up_bus(self):
         self.bus = SessionBus()
@@ -56,6 +55,7 @@ class ActiveWindowMonitorDaemon(Daemon):
             yield self.event_queue.pop()
 
     def check_event(self, event):
+        print(event)
         atom_name = self.connection.core.\
             GetAtomName(event.atom)\
             .reply()\
@@ -69,6 +69,9 @@ class ActiveWindowMonitorDaemon(Daemon):
             self.check_event(event)
 
     def main(self):
+        self.event_queue = deque()
+        self.set_up_xcffib()
+        self.set_up_bus()
         while True:
             try:
                 self.fill_queue()
