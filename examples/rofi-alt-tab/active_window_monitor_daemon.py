@@ -51,7 +51,6 @@ class ActiveWindowMonitorDaemon(Daemon):
             except KeyboardInterrupt:
                 sys_exit(0)
 
-    @property
     def events(self):
         while len(self.event_queue):
             yield self.event_queue.pop()
@@ -66,7 +65,7 @@ class ActiveWindowMonitorDaemon(Daemon):
             self.listener.update_active_window(get_active_window().reply())
 
     def drain_queue(self):
-        for event in self.events:
+        for event in self.events():
             self.check_event(event)
 
     def main(self):
