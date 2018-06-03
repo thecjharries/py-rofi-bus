@@ -1,7 +1,7 @@
 # pylint:disable=W,C,R
 
 from os import environ
-from os.path import expandpath, join, normpath
+from os.path import expanduser, join, normpath
 
 from py_rofi_bus.utils import mkdirp
 
@@ -12,7 +12,7 @@ class Config(dict):
         (
             environ['XDG_CONFIG_HOME']
             if 'XDG_CONFIG_HOME' in environ
-            else normpath(join(expandpath('~'), '.config'))
+            else normpath(join(expanduser('~'), '.config'))
         ),
         'wotw',
         'py-rofi-bus',
