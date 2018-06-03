@@ -63,7 +63,7 @@ class ActiveWindowMonitorDaemon(Daemon):
             .name\
             .to_string()
         if '_NET_ACTIVE_WINDOW' == atom_name:
-            print('cool')
+            self.listener.update_active_window(get_active_window().reply())
 
     def drain_queue(self):
         for event in self.events:
