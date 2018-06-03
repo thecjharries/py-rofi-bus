@@ -35,5 +35,3 @@ after_script:
   # stop the container
   - docker exec "$(cat container_id)" coveralls
   - docker stop "$(cat container_id)"
-
-python3 setup.py install --install-lib $(python3 -m site --user-site)
