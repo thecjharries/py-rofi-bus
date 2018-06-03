@@ -10,8 +10,8 @@ services: docker
 language: generic
 env:
 
-  - DOCKER_FILE="Dockerfile.fedora28.py2" PYTHON="python"
-  - DOCKER_FILE="Dockerfile.fedora28.py3" PYTHON="python3"
+  - DOCKER_FILE="Dockerfile.fedora-28.py2" PYTHON="python"
+  - DOCKER_FILE="Dockerfile.fedora-28.py3" PYTHON="python3"
 
 before_install:
   # Create a docker image called "myimage"
