@@ -27,6 +27,10 @@ class HasPid(HasConfig):
     def get_pid_file_name(self):
         return join(
             self.config.config_dir,
+            (
+                self.config['pid_folder'] if self.pid_name
+                else ''
+            ),
             "{}.pid".format(self.pid_name),
         )
 
