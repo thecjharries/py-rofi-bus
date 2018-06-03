@@ -35,5 +35,5 @@ script:
 
 after_script:
   # stop the container
-  - docker exec "$(cat container_id)" coveralls
   - docker stop "$(cat container_id)"
+  - coveralls
