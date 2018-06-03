@@ -3,8 +3,10 @@ from pydbus import SessionBus
 from pydbus.bus import Bus
 from gi.repository.GLib import MainLoop
 
+from py_rofi_bus.components.mixins import HasConfig
 
-class Daemon(object):
+
+class Daemon(HasConfig):
     INTERFACE_NAME = "pro.wizardsoftheweb.pyrofibus.daemon"
     dbus = """
     <node>
@@ -22,7 +24,8 @@ class Daemon(object):
 
     _is_running = False
 
-    def __init__(self, bus=None, loop=None):
+    def __init__(self, bus=None, loop=None, *args, **kwargs):
+        super(HasConfig, self).__init__(*args, **kwargs)
         if bus is None:
             self.bus = SessionBus()
         else:
