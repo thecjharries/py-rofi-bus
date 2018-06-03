@@ -17,6 +17,7 @@ from py_rofi_bus.components import Daemon
 class ActiveWindowMonitorDaemon(Daemon):
 
     def __init__(self, *args, **kwargs):
+        kwargs['pid_name'] = 'active_window_monitor_daemon'
         super(ActiveWindowMonitorDaemon, self).__init__(*args, **kwargs)
         self.event_queue = deque()
         self.set_up_xcffib()
