@@ -1,5 +1,6 @@
 # pylint:disable=W,C,R
 
+from atexit import register
 from os import getpid, kill, remove
 from os.path import exists, join
 
@@ -26,6 +27,10 @@ class HasPid(HasConfig):
     def get_pid_file_name(self):
         return join(
             self.config.config_dir,
+            (
+                self.config['pid_folder'] if self.pid_name
+                else ''
+            ),
             "{}.pid".format(self.pid_name),
         )
 
@@ -42,5 +47,9 @@ class HasPid(HasConfig):
             remove(pid_file_name)
 
     def write_pid_file(self):
+        register(self.remove_pid)
         with open(self.get_pid_file_name(), 'w') as pid_file:
             pid_file.write(str(getpid()))
+
+    def remove_pid(self):
+        remove(self.get_pid_file_name())

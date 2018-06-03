@@ -21,11 +21,18 @@ class Config(dict):
     DEFAULTS = {
         'application': None,
         'pid_name': '',
+        'load_from': join(BASE_CONFIG_DIR, 'apps-enabled'),
+        'pid_folder': join(BASE_CONFIG_DIR, 'pids'),
     }
 
     def __init__(self, *args, **kwargs):
         self.set_with_defaults(**kwargs)
+        self.init_directories()
+
+    def init_directories(self):
         mkdirp(self.config_dir)
+        mkdirp(self['load_from'])
+        mkdirp(self['pid_folder'])
 
     def apply_dict_to_self(self, dict_to_apply=None):
         if dict_to_apply:

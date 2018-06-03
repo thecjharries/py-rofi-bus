@@ -21,6 +21,10 @@ class HasPidTestCase(TestCase):
         del self.has_pid
 
     def construct_has_pid(self):
+        register_patcher = patch(
+            'py_rofi_bus.components.mixins.has_pid.register')
+        self.mock_register = register_patcher.start()
+        self.addCleanup(register_patcher.stop)
         self.mock_pid = MagicMock()
         hasconfig_patcher = patch(
             'py_rofi_bus.components.mixins.has_pid.HasConfig.__init__',

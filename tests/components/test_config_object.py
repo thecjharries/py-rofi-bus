@@ -24,6 +24,8 @@ class ConfigTestCase(TestCase):
         mkdirp_patcher = patch('py_rofi_bus.components.config.mkdirp')
         self.mock_mkdirp = mkdirp_patcher.start()
         self.addCleanup(mkdirp_patcher.stop)
+        init_patcher = patch.object(Config, 'init_directories')
+        self.mock_init = init_patcher.start()
         set_patcher = patch.object(Config, 'set_with_defaults')
         self.mock_set = set_patcher.start()
         config_dir_patcher = patch.object(Config, 'config_dir')
@@ -31,13 +33,14 @@ class ConfigTestCase(TestCase):
         self.config = Config()
         set_patcher.stop()
         config_dir_patcher.stop()
+        init_patcher.stop()
 
 
 class ConstructorUnitTests(ConfigTestCase):
 
     def test_calls(self):
         self.mock_set.assert_called_once()
-        self.mock_mkdirp.assert_called_once()
+        self.mock_init.assert_called_once()
 
 
 class ApplyDictToSelfUnitTests(ConfigTestCase):
