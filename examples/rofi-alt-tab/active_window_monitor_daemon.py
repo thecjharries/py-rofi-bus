@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # pylint: disable=W,C,R
 
 from __future__ import print_function
