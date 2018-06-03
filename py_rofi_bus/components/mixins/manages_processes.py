@@ -64,10 +64,3 @@ class ManagesProcesses(HasConfig):
                 except OSError:
                     pass
             remove(full_pid_path)
-
-
-test = ManagesProcesses()
-scripts = test.check_for_new_scripts()
-test.load_new_scripts(scripts)
-for _ in [1, 2, 3]:
-    sleep(20)
