@@ -16,7 +16,6 @@ env:
 before_install:
   # Create a docker image called "myimage"
   # - docker build -t myimage -f "$DOCKER_FILE" .
-  - pip3 install coveralls
   - docker pull wizardsoftheweb/py-rofi-bus-images:"$DOCKER_TAG"
 
 before_script:
@@ -36,5 +35,5 @@ script:
 
 after_script:
   # stop the container
+  - docker exec "$(cat container_id)" -e TRAVIS="$TRAVIS" -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" coveralls
   - docker stop "$(cat container_id)"
-  - coveralls
