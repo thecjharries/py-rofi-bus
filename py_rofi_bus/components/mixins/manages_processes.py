@@ -1,6 +1,6 @@
 # pylint: disable=W,C,R
 from atexit import register
-from os import kill, listdir
+from os import kill, listdir, remove
 from os.path import join
 from signal import SIGKILL
 from subprocess import PIPE, Popen
@@ -50,17 +50,17 @@ class ManagesProcesses(HasConfig):
 
     def wipe_processes(self):
         for _, process in list(self.managed_processes.items()):
-            kill(process.pid, SIGKILL)
+            try:
+                kill(process.pid, SIGKILL)
+            except OSError:
+                pass
 
     def demolish_pid_files(self):
         for pid_name in listdir(self.config['pid_folder']):
             full_pid_path = join(self.config['pid_folder'], pid_name)
             with open(full_pid_path, 'r') as pid_file:
-                kill(int(pid_file.read()), SIGKILL)
-
-
-test = ManagesProcesses()
-scripts = test.check_for_new_scripts()
-test.load_new_scripts(scripts)
-for _ in [1, 2, 3]:
-    sleep(20)
+                try:
+                    kill(int(pid_file.read()), SIGKILL)
+                except OSError:
+                    pass
+            remove(full_pid_path)
