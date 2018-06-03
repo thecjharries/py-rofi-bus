@@ -101,6 +101,9 @@ class ClearPidFileUnitTests(HasPidTestCase):
         exists_patcher = patch('py_rofi_bus.components.mixins.has_pid.exists')
         self.mock_exists = exists_patcher.start()
         self.addCleanup(exists_patcher.stop)
+        kill_patcher = patch('py_rofi_bus.components.mixins.has_pid.kill')
+        self.mock_kill = kill_patcher.start()
+        self.addCleanup(kill_patcher.stop)
         remove_patcher = patch('py_rofi_bus.components.mixins.has_pid.remove')
         self.mock_remove = remove_patcher.start()
         self.addCleanup(remove_patcher.stop)
@@ -111,10 +114,12 @@ class ClearPidFileUnitTests(HasPidTestCase):
     def test_doesnt_exist(self):
         self.mock_exists.return_value = False
         self.mock_exists.assert_not_called()
+        self.mock_kill.assert_not_called()
         self.mock_remove.assert_not_called()
         self.mock_open.assert_not_called()
         self.has_pid.clear_pid_file()
         self.mock_exists.assert_called_once()
+        self.mock_kill.assert_not_called()
         self.mock_remove.assert_not_called()
         self.mock_open.assert_not_called()
 
@@ -122,21 +127,26 @@ class ClearPidFileUnitTests(HasPidTestCase):
         self.mock_exists.return_value = True
         self.mock_open.return_value = MagicMock()
         self.mock_exists.assert_not_called()
+        self.mock_kill.assert_not_called()
         self.mock_remove.assert_not_called()
         self.mock_open.assert_not_called()
         self.has_pid.clear_pid_file()
         self.mock_exists.assert_called_once()
+        self.mock_kill.assert_called_once()
         self.mock_remove.assert_called_once()
         self.mock_open.assert_called_once()
 
     def test_cant_kill(self):
         self.mock_exists.return_value = True
         self.mock_open.return_value = MagicMock()
+        self.mock_kill.side_effect = OSError
         self.mock_exists.assert_not_called()
+        self.mock_kill.assert_not_called()
         self.mock_remove.assert_not_called()
         self.mock_open.assert_not_called()
         self.has_pid.clear_pid_file()
         self.mock_exists.assert_called_once()
+        self.mock_kill.assert_called_once()
         self.mock_remove.assert_called_once()
         self.mock_open.assert_called_once()
 
