@@ -12,7 +12,7 @@
 
 This package provides a DBus foundation for ``rofi``.
 
-Current version is a proof-of-concept with a simple window switcher. The API will potentially change drastically.
+Current version is a skeleton API with a simple window switcher. The API will potentially change drastically.
 
 
 
